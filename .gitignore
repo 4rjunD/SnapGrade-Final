@@ -1,0 +1,111 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# mypy
+.mypy_cache/
+.dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# VS Code
+.vscode/
+
+# Environments
+.env
+.venv
+ENV/
+venv/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Dropbox
+.dropbox*
+
+# Local data
+uploads/
+
+# Training data (if not to be pushed)
+training_data/*.jsonl
+
+dataset_small/
+dataset_tiny/
+
+# Ignore poppler config template
+poppler_config.py.template
+
+# Ignore static build artifacts
+static/css/*
+!static/css/style.css
+!static/css/excel_export.css
+!static/css/feedback.css
+!static/css/student-metadata.css
+static/js/*
+!static/js/main.js
+!static/js/rubric_upload_fix.js
+
+# Ignore logs
+*.log
+
+# Temporary Excel files
+temp_excel/*
+!temp_excel/.gitkeep
+
+# Exports - keep directory but ignore content
+exports/*
+!exports/.gitkeep
+
+# Ignore rubrics if sensitive
+# rubrics/rubrics.json

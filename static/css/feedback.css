@@ -1,0 +1,266 @@
+/* Structured Feedback Styles for SnapGrade */
+
+/* Base feedback container */
+.structured-feedback {
+    background: var(--background-card);
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+/* Score summary section */
+.score-summary {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--divider-color);
+}
+
+.score-pill {
+    background: var(--primary-gradient);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius-full);
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    box-shadow: var(--shadow-md);
+    margin-right: 1rem;
+}
+
+.score-detail {
+    font-size: var(--font-size-lg);
+    color: var(--text-secondary);
+}
+
+/* Feedback sections */
+.feedback-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.feedback-section {
+    background: rgba(30, 41, 59, 0.5);
+    border-radius: var(--border-radius);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.section-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--divider-color);
+}
+
+/* Questions grid */
+.questions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+/* Question card */
+.question-card {
+    background: var(--background-medium);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid transparent;
+    transition: transform var(--transition-normal) var(--easing),
+                box-shadow var(--transition-normal) var(--easing);
+}
+
+.question-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.question-card.correct {
+    border-left-color: var(--success-color);
+}
+
+.question-card.incorrect {
+    border-left-color: var(--danger-color);
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.question-number {
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    background: var(--background-light);
+    border-radius: var(--border-radius-sm);
+}
+
+.question-score {
+    font-weight: 600;
+}
+
+.correct .question-score {
+    color: var(--success-color);
+}
+
+.incorrect .question-score {
+    color: var(--danger-color);
+}
+
+.question-details {
+    font-size: var(--font-size-sm);
+}
+
+.question-details p {
+    margin-bottom: 0.75rem;
+}
+
+.question-details strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Lists in feedback */
+.mistakes, .partial-credit {
+    margin: 0.75rem 0;
+}
+
+.mistakes ul, .partial-credit ul {
+    list-style: none;
+    margin-left: 0.5rem;
+}
+
+.mistakes li, .partial-credit li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.4rem;
+}
+
+.mistakes li::before, .partial-credit li::before {
+    position: absolute;
+    left: 0;
+}
+
+.mistakes li::before {
+    content: "•";
+    color: var(--danger-color);
+    font-weight: bold;
+}
+
+.partial-credit li::before {
+    content: "✓";
+    color: var(--success-color);
+}
+
+.teacher-note {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: rgba(59, 130, 246, 0.1);
+    border-left: 3px solid var(--info-color);
+    border-radius: var(--border-radius-sm);
+}
+
+/* Overall feedback section */
+.overall-feedback {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.feedback-strengths h5,
+.feedback-improvements h5,
+.feedback-next-steps h5 {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.feedback-strengths h5 i {
+    color: var(--success-color);
+    margin-right: 0.5rem;
+}
+
+.feedback-improvements h5 i {
+    color: var(--warning-color);
+    margin-right: 0.5rem;
+}
+
+.feedback-next-steps h5 i {
+    color: var(--primary-color);
+    margin-right: 0.5rem;
+}
+
+.feedback-strengths ul,
+.feedback-improvements ul {
+    list-style: none;
+}
+
+.feedback-strengths li,
+.feedback-improvements li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+}
+
+.feedback-strengths li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--success-color);
+}
+
+.feedback-improvements li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--warning-color);
+}
+
+/* Teacher grading notes */
+.grading-notes {
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px dashed rgba(99, 102, 241, 0.3);
+}
+
+.grading-notes h5 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+/* For simple, non-structured feedback display */
+.simple-feedback {
+    padding: 1rem;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    background: var(--background-medium);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--primary-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .questions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .score-summary {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+}

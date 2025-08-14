@@ -1,0 +1,121 @@
+/* Student Metadata Styles for SnapGrade */
+
+.metadata-container {
+    margin-bottom: 2rem;
+}
+
+.student-metadata {
+    background: rgba(30, 41, 59, 0.85);
+    border-radius: var(--border-radius, 8px);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-left: 5px solid var(--accent-color, #4c6ef5);
+    border-top: 1px solid rgba(76, 110, 245, 0.5);
+    border-bottom: 1px solid rgba(76, 110, 245, 0.5);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(15px);
+    animation: glow 2s ease-in-out infinite alternate;
+    position: relative;
+}
+
+@keyframes glow {
+    from {
+        box-shadow: 0 0 10px rgba(76, 110, 245, 0.2);
+    }
+    to {
+        box-shadow: 0 0 20px rgba(76, 110, 245, 0.4);
+    }
+}
+
+/* Add a subtle indicator in the corner */
+.student-metadata:before {
+    content: "Student Info";
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    background: var(--accent-color, #4c6ef5);
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.metadata-header {
+    color: #ffffff;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.5rem;
+}
+
+.student-info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.student-name, 
+.assignment-title {
+    color: var(--text-primary, #ffffff);
+    font-size: var(--font-size-md, 14px);
+}
+
+.student-name strong, 
+.assignment-title strong {
+    color: var(--accent-color, #4c6ef5);
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+/* Enhanced metadata display */
+.metadata-container {
+    width: 100%;
+}
+
+.metadata-item {
+    display: flex;
+    margin-bottom: 12px;
+    align-items: center;
+    background: rgba(20, 30, 45, 0.5);
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+}
+
+.metadata-label {
+    flex: 0 0 100px;
+    font-weight: 600;
+    color: var(--accent-color, #4c6ef5);
+    margin-right: 15px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.metadata-value {
+    flex: 1;
+    color: var(--text-primary, #ffffff);
+    font-weight: 600;
+    font-size: 1.15rem;
+    text-shadow: 0 0 5px rgba(76, 110, 245, 0.3);
+    background: rgba(76, 110, 245, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(76, 110, 245, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .student-info-container,
+    .metadata-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .metadata-label {
+        margin-bottom: 4px;
+    }
+}

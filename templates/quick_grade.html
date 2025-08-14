@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Grade - SnapGrade</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark-theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/feedback.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>SnapGrade</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-content">
+                <div class="nav-section">
+                    <h3>Main Menu</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="/dashboard">
+                                <i class="fas fa-home"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item active">
+                            <a href="/quick-grade">
+                                <i class="fas fa-magic"></i>
+                                <span>Quick Grade</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Grade Assignments</span>
+                        </li>
+                        <li class="nav-item">
+                            <i class="fas fa-history"></i>
+                            <span>Recent Grades</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-section">
+                    <h3>Tools</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Rubrics</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-section">
+                    <h3>Classes</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <i class="fas fa-users"></i>
+                            <span>Manage Classes</span>
+                        </li>
+                        <li class="nav-item">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Class Reports</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-section">
+                    <h3>Help</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Tutorial Guide</span>
+                        </li>
+                        <li class="nav-item">
+                            <i class="fas fa-headset"></i>
+                            <span>Support</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="upgrade-section">
+                    <div class="upgrade-badge">
+                        <span class="free-label">FREE TRIAL ACTIVE</span>
+                        <button class="upgrade-btn">Upgrade Account</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top bar with logout -->
+            <div class="top-bar">
+                <div class="teacher-welcome">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Welcome, <span id="teacherNameTop">Teacher</span></span>
+                </div>
+                <button class="logout-btn-top" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+            
+            <!-- Main Content Area -->
+            <div class="quick-grade-container">
+                <h1 class="quick-grade-title">Quick Grade</h1>
+                
+                <div class="grade-form-row">
+                    <div class="grade-form-group">
+                        <label for="assignmentType">Assignment Type</label>
+                        <select id="assignmentType" class="grade-select">
+                            <option value="" disabled selected>Select assignment type</option>
+                            <option value="essay">Essay</option>
+                            <option value="short-answer">Short Answer</option>
+                            <option value="math">Math Problem</option>
+                            <option value="science">Science Lab</option>
+                            <option value="coding">Coding Assignment</option>
+                            <option value="custom">Custom Assignment</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="grade-form-row">
+                    <div class="grade-form-group">
+                        <label for="rubricSelect">Rubric</label>
+                        <select id="rubricSelect" class="grade-select">
+                            <option value="" disabled selected>Choose rubric</option>
+                            <option value="basic-essay">Basic Essay Rubric</option>
+                            <option value="advanced-essay">Advanced Essay Rubric</option>
+                            <option value="short-answer">Short Answer Rubric</option>
+                            <option value="math-problem">Math Problem Rubric</option>
+                            <option value="custom">Custom Rubric</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="grade-form-row">
+                    <label>Student Submission</label>
+                    
+                    <div class="upload-options">
+                        <div class="upload-option">
+                            <input type="radio" id="textOption" name="submissionType" checked>
+                            <label for="textOption">
+                                <i class="fas fa-font"></i>
+                                Text
+                            </label>
+                        </div>
+                        
+                        <div class="upload-option">
+                            <input type="radio" id="singleFileOption" name="submissionType">
+                            <label for="singleFileOption">
+                                <i class="fas fa-file"></i>
+                                Single File
+                            </label>
+                        </div>
+                        
+                        <div class="upload-option">
+                            <input type="radio" id="batchUploadOption" name="submissionType">
+                            <label for="batchUploadOption">
+                                <i class="fas fa-layer-group"></i>
+                                Batch Upload
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Text submission area -->
+                    <div id="textSubmissionArea">
+                        <textarea class="grade-textarea" placeholder="Paste the student's submission here..."></textarea>
+                    </div>
+                    
+                    <!-- File upload area (initially hidden) -->
+                    <div id="fileUploadArea" class="file-upload-area" style="display: none;">
+                        <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+                        <p class="file-upload-text">Click to upload or drag & drop assignment</p>
+                        <p class="file-upload-hint">Supported formats: PDF, TXT, DOC, DOCX, JPG, PNG</p>
+                    </div>
+                    
+                    <!-- Batch upload area (initially hidden) -->
+                    <div id="batchUploadArea" class="file-upload-area" style="display: none;">
+                        <i class="fas fa-file-upload file-upload-icon"></i>
+                        <p class="file-upload-text">Click to upload multiple assignments</p>
+                        <p class="file-upload-hint">Select multiple files (Images, PDF, TXT, DOC, DOCX)</p>
+                    </div>
+                </div>
+                
+                <button id="gradeButton" class="grade-action-button">
+                    <i class="fas fa-check-circle"></i>
+                    Grade Assignment
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch current teacher info and update UI
+            fetch('/current-teacher')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.teacher_name) {
+                        document.getElementById('teacherNameTop').textContent = data.teacher_name;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching teacher info:', error);
+                });
+                
+            const textOption = document.getElementById('textOption');
+            const singleFileOption = document.getElementById('singleFileOption');
+            const batchUploadOption = document.getElementById('batchUploadOption');
+            
+            const textSubmissionArea = document.getElementById('textSubmissionArea');
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            const batchUploadArea = document.getElementById('batchUploadArea');
+            
+            // Handle submission type selection
+            textOption.addEventListener('change', function() {
+                if (this.checked) {
+                    textSubmissionArea.style.display = 'block';
+                    fileUploadArea.style.display = 'none';
+                    batchUploadArea.style.display = 'none';
+                }
+            });
+            
+            singleFileOption.addEventListener('change', function() {
+                if (this.checked) {
+                    textSubmissionArea.style.display = 'none';
+                    fileUploadArea.style.display = 'block';
+                    batchUploadArea.style.display = 'none';
+                }
+            });
+            
+            batchUploadOption.addEventListener('change', function() {
+                if (this.checked) {
+                    textSubmissionArea.style.display = 'none';
+                    fileUploadArea.style.display = 'none';
+                    batchUploadArea.style.display = 'block';
+                }
+            });
+            
+            // File upload area functionality
+            fileUploadArea.addEventListener('click', function() {
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = '.pdf,.txt,.doc,.docx,.jpg,.jpeg,.png';
+                fileInput.click();
+                
+                fileInput.addEventListener('change', function(e) {
+                    if (e.target.files.length > 0) {
+                        // Handle file selection
+                        const fileName = e.target.files[0].name;
+                        fileUploadArea.innerHTML = `
+                            <i class="fas fa-file-alt file-upload-icon"></i>
+                            <p class="file-upload-text">File selected: ${fileName}</p>
+                            <p class="file-upload-hint">Click to change selection</p>
+                        `;
+                    }
+                });
+            });
+            
+            // Batch upload area functionality
+            batchUploadArea.addEventListener('click', function() {
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = '.pdf,.txt,.doc,.docx,.jpg,.jpeg,.png';
+                fileInput.multiple = true;
+                fileInput.click();
+                
+                fileInput.addEventListener('change', function(e) {
+                    if (e.target.files.length > 0) {
+                        // Handle multiple file selection
+                        const fileCount = e.target.files.length;
+                        batchUploadArea.innerHTML = `
+                            <i class="fas fa-file-import file-upload-icon"></i>
+                            <p class="file-upload-text">${fileCount} files selected</p>
+                            <p class="file-upload-hint">Click to change selection</p>
+                        `;
+                    }
+                });
+            });
+            
+            // Enable drag and drop for file upload areas
+            [fileUploadArea, batchUploadArea].forEach(area => {
+                area.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.style.borderColor = 'var(--primary-color)';
+                    this.style.backgroundColor = 'rgba(30, 41, 59, 0.7)';
+                });
+                
+                area.addEventListener('dragleave', function() {
+                    this.style.borderColor = 'rgba(99, 102, 241, 0.3)';
+                    this.style.backgroundColor = 'rgba(15, 23, 42, 0.5)';
+                });
+                
+                area.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.style.borderColor = 'rgba(99, 102, 241, 0.3)';
+                    this.style.backgroundColor = 'rgba(15, 23, 42, 0.5)';
+                    
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        if (area === fileUploadArea && files.length === 1) {
+                            // Single file drop
+                            fileUploadArea.innerHTML = `
+                                <i class="fas fa-file-alt file-upload-icon"></i>
+                                <p class="file-upload-text">File selected: ${files[0].name}</p>
+                                <p class="file-upload-hint">Click to change selection</p>
+                            `;
+                        } else if (area === batchUploadArea) {
+                            // Multiple files drop
+                            batchUploadArea.innerHTML = `
+                                <i class="fas fa-file-import file-upload-icon"></i>
+                                <p class="file-upload-text">${files.length} files selected</p>
+                                <p class="file-upload-hint">Click to change selection</p>
+                            `;
+                        }
+                    }
+                });
+            });
+            
+            // Grade button functionality
+            document.getElementById('gradeButton').addEventListener('click', function() {
+                // Add loading state
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                this.disabled = true;
+                
+                // Simulate grading process (replace with actual API call)
+                setTimeout(() => {
+                    // Show success notification (you would implement this)
+                    alert('Assignment graded successfully!');
+                    
+                    // Reset button
+                    this.innerHTML = '<i class="fas fa-check-circle"></i> Grade Assignment';
+                    this.disabled = false;
+                }, 2000);
+            });
+        });
+        
+        function handleLogout() {
+            if (confirm('Are you sure you want to log out?')) {
+                window.location.href = '/';
+            }
+        }
+    </script>
+</body>
+</html>

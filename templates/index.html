@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapGrade - AI Grading</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/feedback.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/student-metadata.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/excel_export.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/excel_export.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>SnapGrade</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-content">
+                <div class="nav-section">
+                    <h3>Help & Tools</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item active">
+                            <i class="fas fa-play-circle"></i>
+                            <span>Start Guide</span>
+                        </li>
+                        <li class="nav-item">
+                            <i class="fas fa-puzzle-piece"></i>
+                            <span>Extension</span>
+                        </li>
+                        <li class="nav-item">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Help</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-section">
+                    <h3>Grade</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Rubrics</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-section">
+                    <h3>Organize & Reports</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <i class="fas fa-users"></i>
+                            <span>Classes</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="upgrade-section">
+                    <div class="upgrade-badge">
+                        <span class="free-label">FREE FOR FINALS</span>
+                        <button class="upgrade-btn">Upgrade</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top bar with logout -->
+            <div class="top-bar">
+                <div class="teacher-welcome">
+                    <span>Welcome, <span id="teacherNameTop">Loading...</span></span>
+                </div>
+                <button class="logout-btn-top" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+            
+            <div class="content-header">
+                <div class="promo-banner">
+                    <i class="fas fa-star"></i>
+                    <span>SnapGrade works best with our Free Chrome Extension!</span>
+                    <button class="get-extension-btn">Get Extension</button>
+                    <button class="close-banner">×</button>
+                </div>
+                
+                <div class="timer-section">
+                    <span>Use code SNAP25 for 25% off SnapGrade Yearly</span>
+                    <div class="timer">
+                        <span class="timer-item">69 <small>D</small></span>
+                        <span class="timer-item">05 <small>H</small></span>
+                        <span class="timer-item">37 <small>M</small></span>
+                        <span class="timer-item">38 <small>S</small></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="workflow-container">
+                <div class="workflow-grid">
+                    <!-- Step 1: Get Extension -->
+                    <div class="workflow-card">
+                        <div class="card-icon blue">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <h3>Get the Extension, Go to Google Docs, Canvas</h3>
+                        <p>Once you have the extension, open your student's essay in Google Docs or Canvas</p>
+                        <button class="card-action-btn">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Step 2: Choose Rubric -->
+                    <div class="workflow-card">
+                        <div class="card-icon blue">
+                            <i class="fas fa-th-large"></i>
+                        </div>
+                        <h3>Choose, create or discover rubrics</h3>
+                        <p>Select from your existing rubrics, create a new one, or explore our library of pre-made rubrics.</p>
+                        <button class="card-action-btn">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Step 3: Grade -->
+                    <div class="workflow-card">
+                        <div class="card-icon blue">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <h3>Hit Grade, review feedback, and finalize</h3>
+                        <p>Click the SnapGrade icon, review the feedback, and finalize your grading in seconds.</p>
+                        <button class="card-action-btn">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Help Page Section -->
+                <div class="help-page-section" id="help-page" style="display: none;">
+                    <div class="help-container">
+                        <div class="help-header">
+                            <h1>Help & Support</h1>
+                            <p>Need assistance? We're here to help! Contact us using the form below.</p>
+                        </div>
+                        
+                        <div class="contact-form-container">
+                            <form id="contact-form" class="contact-form">
+                                <div class="form-row">
+                                    <div class="form-field">
+                                        <label for="contact-name">Name *</label>
+                                        <input type="text" id="contact-name" class="text-field" required placeholder="Your full name">
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="contact-email">Email *</label>
+                                        <input type="email" id="contact-email" class="text-field" required placeholder="your.email@example.com">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-field">
+                                    <label for="contact-subject">Subject *</label>
+                                    <select id="contact-subject" class="select-field" required>
+                                        <option value="" disabled selected>Select a topic</option>
+                                        <option value="technical-support">Technical Support</option>
+                                        <option value="billing">Billing & Subscription</option>
+                                        <option value="feature-request">Feature Request</option>
+                                        <option value="bug-report">Bug Report</option>
+                                        <option value="general-inquiry">General Inquiry</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-field">
+                                    <label for="contact-message">Message *</label>
+                                    <textarea id="contact-message" class="text-field large" rows="6" required placeholder="Please describe your question or issue in detail..."></textarea>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="submit" class="submit-btn">
+                                        <i class="fas fa-paper-plane"></i>
+                                        Send Message
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+
+                    </div>
+                </div>
+                
+                <!-- Rubrics Management Section -->
+                <div class="rubrics-section" id="rubrics-page" style="display: none;">
+                    <div class="rubrics-container">
+                        <div class="rubrics-header">
+                            <h2>Rubrics Management</h2>
+                            <button class="create-rubric-btn">
+                                <i class="fas fa-plus"></i>
+                                Create New Rubric
+                            </button>
+                        </div>
+                        
+                        <div class="rubrics-grid">
+                            <!-- Sample Rubric 1 -->
+                            <div class="rubric-card">
+                                <div class="rubric-header">
+                                    <h3>Essay Grading Rubric</h3>
+                                    <div class="rubric-actions">
+                                        <button class="action-btn edit-btn">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete-btn">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="rubric-description">Comprehensive rubric for evaluating essay assignments including content, structure, and grammar.</p>
+                                <div class="rubric-meta">
+                                    <span class="rubric-type">Essay</span>
+                                    <span class="rubric-date">Created: Jan 15, 2024</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Sample Rubric 2 -->
+                            <div class="rubric-card">
+                                <div class="rubric-header">
+                                    <h3>Math Problem Set</h3>
+                                    <div class="rubric-actions">
+                                        <button class="action-btn edit-btn">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete-btn">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="rubric-description">Rubric for grading mathematical problem-solving assignments with step-by-step evaluation.</p>
+                                <div class="rubric-meta">
+                                    <span class="rubric-type">Math</span>
+                                    <span class="rubric-date">Created: Jan 10, 2024</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Sample Rubric 3 -->
+                            <div class="rubric-card">
+                                <div class="rubric-header">
+                                    <h3>Code Review Rubric</h3>
+                                    <div class="rubric-actions">
+                                        <button class="action-btn edit-btn">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete-btn">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="rubric-description">Evaluation criteria for programming assignments focusing on code quality, functionality, and documentation.</p>
+                                <div class="rubric-meta">
+                                    <span class="rubric-type">Programming</span>
+                                    <span class="rubric-date">Created: Jan 5, 2024</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Classes Management Section -->
+                <div class="classes-page" id="classes-page" style="display: none;">
+                    <div class="classes-container">
+                        <div class="classes-header">
+                            <h2>Classes Management</h2>
+                            <button class="create-class-btn" onclick="showCreateClassModal()">
+                                <i class="fas fa-plus"></i>
+                                Create New Class
+                            </button>
+                        </div>
+                        
+                        <div class="classes-grid">
+                            <!-- Sample Class 1 -->
+                            <div class="class-card">
+                                <div class="class-header">
+                                    <h3>English Literature 101</h3>
+                                    <div class="class-actions">
+                                        <button class="action-btn edit-btn">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete-btn">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="class-description">Introduction to English Literature covering poetry, prose, and drama from various periods.</p>
+                                <div class="class-meta">
+                                    <span class="class-period"><i class="fas fa-clock"></i> Period 3</span>
+                                    <span class="class-students"><i class="fas fa-users"></i> 28 Students</span>
+                                    <span class="class-semester">Spring 2024</span>
+                                </div>
+                                <div class="class-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number">15</span>
+                                        <span class="stat-label">Assignments</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-number">342</span>
+                                        <span class="stat-label">Graded</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sample Class 2 -->
+                            <div class="class-card">
+                                <div class="class-header">
+                                    <h3>Calculus I</h3>
+                                    <div class="class-actions">
+                                        <button class="action-btn edit-btn">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete-btn">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="class-description">Fundamental concepts of differential and integral calculus with applications.</p>
+                                <div class="class-meta">
+                                    <span class="class-period"><i class="fas fa-clock"></i> Period 1</span>
+                                    <span class="class-students"><i class="fas fa-users"></i> 35 Students</span>
+                                    <span class="class-semester">Spring 2024</span>
+                                </div>
+                                <div class="class-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number">12</span>
+                                        <span class="stat-label">Assignments</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-number">420</span>
+                                        <span class="stat-label">Graded</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sample Class 3 -->
+                            <div class="class-card">
+                                <div class="class-header">
+                                    <h3>Computer Science 101</h3>
+                                    <div class="class-actions">
+                                        <button class="action-btn edit-btn">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete-btn">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="class-description">Introduction to programming concepts, algorithms, and problem-solving techniques.</p>
+                                <div class="class-meta">
+                                    <span class="class-period"><i class="fas fa-clock"></i> Period 5</span>
+                                    <span class="class-students"><i class="fas fa-users"></i> 42 Students</span>
+                                    <span class="class-semester">Spring 2024</span>
+                                </div>
+                                <div class="class-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number">8</span>
+                                        <span class="stat-label">Assignments</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-number">336</span>
+                                        <span class="stat-label">Graded</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Grade Section -->
+                <div class="quick-grade-section" id="grade-page">
+                    <h2>Quick Grade (No Extension Required)</h2>
+                    <div class="grading-form-container">
+                        <form id="grading-form" class="grading-form">
+                            <!-- Configuration Row -->
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label>Assignment Type</label>
+                                    <select class="select-field" id="assignment-type" required>
+                                        <option value="" disabled selected>Select assignment type</option>
+                                        <option value="Essay">Essay</option>
+                                        <option value="Short Answer">Short Answer</option>
+                                        <option value="Problem Set">Problem Set</option>
+                                        <option value="Multiple Choice">Multiple Choice</option>
+                                        <option value="Code">Code</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label>Rubric</label>
+                                    <select class="select-field" id="rubric-select" required>
+                                        <option value="" disabled selected>Choose rubric</option>
+                                        <option value="custom">Custom rubric</option>
+                                        <option value="upload">Upload file</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Custom Rubric -->
+                            <div class="form-section" id="custom-rubric-section" style="display: none;">
+                                <label>Custom Rubric</label>
+                                <textarea class="text-field" id="custom-rubric" rows="4" placeholder="Enter your custom rubric criteria..."></textarea>
+                            </div>
+
+                            <!-- Rubric Upload Section -->
+                            <div class="form-section" id="rubric-upload-section" style="display: none;">
+                                <label>Upload Rubric</label>
+                                <div class="upload-zone" id="rubric-drop-zone">
+                                    <input type="file" id="rubric-upload" accept=".txt,.pdf,.doc,.docx,.jpg,.jpeg,.png" hidden>
+                                    <label for="rubric-upload" class="upload-label">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <span class="upload-text">Click to upload or drag & drop rubric</span>
+                                        <span class="upload-hint">TXT, PDF, DOC, DOCX, JPG, PNG</span>
+                                    </label>
+                                    <div id="rubric-file-preview" class="file-preview" style="display: none;">
+                                        <i class="fas fa-file"></i>
+                                        <span id="rubric-file-name"></span>
+                                        <button type="button" id="remove-rubric-file" class="remove-file-btn">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <div id="rubric-preview-container" class="mt-3" style="display: none;">
+                                        <h5>Rubric Content Preview:</h5>
+                                        <pre id="rubric-preview" class="form-control" style="height: 150px; overflow-y: auto; white-space: pre-wrap;"></pre>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submission Area -->
+                            <div class="form-section">
+                                <label>Student Submission</label>
+                                <div class="submission-tabs">
+                                    <button type="button" class="tab active" data-tab="text">
+                                        <i class="fas fa-edit"></i> Text
+                                    </button>
+                                    <button type="button" class="tab" data-tab="file">
+                                        <i class="fas fa-file-upload"></i> Single File
+                                    </button>
+                                    <button type="button" class="tab" data-tab="batch">
+                                        <i class="fas fa-files"></i> Batch Upload
+                                    </button>
+                                </div>
+                                
+                                <div class="tab-content active" id="text-content">
+                                    <textarea class="text-field large" id="submission" rows="8" placeholder="Paste the student's submission here..."></textarea>
+                                </div>
+                                
+                                <!-- Single File Upload Section ONLY -->
+                                <div class="tab-content" id="file-content">
+                                    <div class="upload-zone" id="single-file-drop-zone">
+                                        <input type="file" id="file-upload" accept=".pdf,.txt,.doc,.docx,.jpg,.jpeg,.png" hidden>
+                                        <label for="file-upload" class="upload-label">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <span class="upload-text">Click to upload or drag & drop assignment</span>
+                                            <span class="upload-hint">PDF, TXT, DOC, DOCX, JPG, PNG</span>
+                                        </label>
+                                        <div id="file-preview" class="file-preview" style="display: none;">
+                                            <i class="fas fa-file"></i>
+                                            <span id="file-name"></span>
+                                            <button type="button" id="remove-file" class="remove-file-btn">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="tab-content" id="batch-content">
+                                    <div class="batch-upload-zone">
+                                        <input type="file" id="batch-upload" accept="image/*,.pdf,.txt,.doc,.docx" multiple hidden>
+                                        <label for="batch-upload" class="upload-label">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <span class="upload-text">Click to upload multiple assignments</span>
+                                            <span class="upload-hint">Select multiple files (Images, PDF, TXT, DOC, DOCX)</span>
+                                        </label>
+                                        <div id="batch-file-list" class="batch-file-list"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-magic"></i>
+                                Grade Assignment
+                            </button>
+                        </form>
+
+                        <!-- Loading State -->
+                        <div class="loading" id="loading" style="display: none;">
+                            <div class="loading-spinner"></div>
+                            <p class="loading-text">Analyzing submission...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="results" id="results-section" style="display: none;">
+                <div class="results-header">
+                    <h2 class="results-title">Grading Results</h2>
+                </div>
+                
+                <div class="results-content">
+                    <div class="score-card">
+                        <div class="score" id="score-display">--</div>
+                        <div class="score-label">Score</div>
+                    </div>
+                    
+                    <div class="feedback-card">
+                        <h3 class="feedback-title">Detailed Feedback</h3>
+                        <div class="feedback-content" id="feedback-display"></div>
+                    </div>
+
+                    <div class="extracted-card" id="extracted-text-section" style="display: none;">
+                        <h3 class="extracted-title">Extracted Text</h3>
+                        <div class="extracted-content" id="extracted-text"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Batch Results -->
+            <div class="batch-results" id="batch-results-section" style="display: none;">
+                <div class="results-header">
+                    <h2 class="results-title">Batch Grading Results</h2>
+                    <div class="batch-summary" id="batch-summary"></div>
+                </div>
+                
+                <div class="batch-results-content" id="batch-results-content">
+                    <!-- Individual results will be populated here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Rubric Modal -->
+    <div id="create-rubric-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Rubric</h2>
+                <button id="close-rubric-modal" class="close-modal-btn">&times;</button>
+            </div>
+            <form id="create-rubric-form">
+                <div class="form-field">
+                    <label for="rubric-name">Rubric Name *</label>
+                    <input type="text" id="rubric-name" class="text-field" required placeholder="Enter rubric name">
+                </div>
+                
+                <div class="form-field">
+                    <label for="rubric-type">Assignment Type *</label>
+                    <select id="rubric-type" class="select-field" required>
+                        <option value="" disabled selected>Select assignment type</option>
+                        <option value="Essay">Essay</option>
+                        <option value="Short Answer">Short Answer</option>
+                        <option value="Problem Set">Problem Set</option>
+                        <option value="Multiple Choice">Multiple Choice</option>
+                        <option value="Code">Code</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-field">
+                    <label for="rubric-description">Description *</label>
+                    <textarea id="rubric-description" class="text-field" rows="3" required placeholder="Brief description of this rubric"></textarea>
+                </div>
+                
+                <div class="form-field">
+                    <label for="rubric-content">Rubric Content *</label>
+                    <textarea id="rubric-content" class="text-field large" rows="8" required placeholder="Enter detailed grading criteria and point distribution..."></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" id="cancel-rubric" class="cancel-btn">Cancel</button>
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-save"></i>
+                        Create Rubric
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/rubric_upload_fix.js') }}"></script>
+    <script>
+        // Tab functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabType = tab.dataset.tab;
+                
+                // Update tabs
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Update content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabType + '-content').classList.add('active');
+            });
+        });
+
+        // Close banner functionality
+        document.querySelector('.close-banner')?.addEventListener('click', () => {
+            document.querySelector('.promo-banner').style.display = 'none';
+        });
+    </script>
+
+    <!-- Class Management Modals -->
+    <!-- Create Class Modal -->
+    <div id="create-class-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Class</h3>
+                <button class="close-btn" onclick="hideCreateClassModal()">&times;</button>
+            </div>
+            <form onsubmit="handleCreateClass(event)">
+                <div class="form-group">
+                    <label for="class-name">Class Name *</label>
+                    <input type="text" id="class-name" name="name" required placeholder="e.g., English Literature 101">
+                </div>
+                <div class="form-group">
+                    <label for="class-description">Description *</label>
+                    <textarea id="class-description" name="description" required placeholder="Brief description of the class"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="class-period">Period *</label>
+                    <input type="text" id="class-period" name="period" required placeholder="e.g., Period 3 or 9:00 AM">
+                </div>
+                <div class="form-group">
+                    <label for="class-semester">Semester *</label>
+                    <input type="text" id="class-semester" name="semester" required placeholder="e.g., Spring 2024">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="hideCreateClassModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Class</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Student Management Modal -->
+    <div id="student-management-modal" class="modal" style="display: none;">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>Manage Students</h3>
+                <button class="close-btn" onclick="hideStudentManagementModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="student-management-container">
+                    <div class="add-student-section">
+                        <h4>Add New Student</h4>
+                        <form onsubmit="addStudentToClass(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="student-name">Student Name *</label>
+                                    <input type="text" id="student-name" name="student_name" required placeholder="Full name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="student-email">Email *</label>
+                                    <input type="email" id="student-email" name="student_email" required placeholder="student@email.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="student-id-input">Student ID</label>
+                                    <input type="text" id="student-id-input" name="student_id" placeholder="Optional student ID">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Student</button>
+                        </form>
+                    </div>
+                    <div class="students-list-section">
+                        <h4>Current Students</h4>
+                        <div id="students-list" class="students-list">
+                            <!-- Students will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Batch Assignment Modal -->
+    <div id="batch-assignment-modal" class="modal" style="display: none;">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>Submit Batch Assignment</h3>
+                <button class="close-btn" onclick="hideBatchAssignmentModal()">&times;</button>
+            </div>
+            <form onsubmit="handleBatchAssignment(event)">
+                <div class="form-group">
+                    <label for="batch-assignment-name">Assignment Name *</label>
+                    <input type="text" id="batch-assignment-name" name="assignment_name" placeholder="e.g., Essay on Shakespeare">
+                </div>
+                <div class="form-group">
+                    <label for="batch-assignment-type">Assignment Type *</label>
+                    <select id="batch-assignment-type" name="assignment_type">
+                        <option value="">Select assignment type</option>
+                        <option value="Essay">Essay</option>
+                        <option value="Short Answer">Short Answer</option>
+                        <option value="Problem Set">Problem Set</option>
+                        <option value="Programming">Programming</option>
+                        <option value="Lab Report">Lab Report</option>
+                        <option value="Creative Writing">Creative Writing</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Rubric</label>
+                    <div class="rubric-tabs">
+                        <button type="button" class="tab active" data-tab="rubric-text">
+                            <i class="fas fa-edit"></i> Text
+                        </button>
+                        <button type="button" class="tab" data-tab="rubric-file">
+                            <i class="fas fa-file-upload"></i> Upload File
+                        </button>
+                    </div>
+                    
+                    <div class="tab-content active" id="rubric-text-content">
+                        <textarea id="batch-rubric-text" name="rubric_content" required placeholder="Enter the grading rubric criteria..."></textarea>
+                    </div>
+                    
+                    <div class="tab-content" id="rubric-file-content">
+                        <div class="upload-zone">
+                            <input type="file" id="batch-rubric-upload" accept=".txt,.pdf,.doc,.docx,.jpg,.jpeg,.png" hidden>
+                            <label for="batch-rubric-upload" class="upload-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span class="upload-text">Click to upload rubric</span>
+                                <span class="upload-hint">TXT, PDF, DOC, DOCX, JPG, PNG</span>
+                            </label>
+                            <div id="batch-rubric-file-preview" class="file-preview" style="display: none;">
+                                <span id="batch-rubric-file-name"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Student Submissions</label>
+                    <div class="submission-method-tabs">
+                        <button type="button" class="tab active" data-tab="manual-entry">
+                            <i class="fas fa-edit"></i> Manual Entry
+                        </button>
+                        <button type="button" class="tab" data-tab="file-upload">
+                            <i class="fas fa-files"></i> File Upload
+                        </button>
+                    </div>
+                    
+                    <div class="tab-content active" id="manual-entry-content">
+                        <div id="batch-submissions" class="batch-submissions">
+                            <!-- Student submission fields will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="file-upload-content">
+                        <div class="student-file-mapping">
+                            <div class="mapping-header">
+                                <h4>Map Files to Students</h4>
+                                <p>Upload files and assign them to specific students in your class.</p>
+                            </div>
+                            <div class="upload-section">
+                                <input type="file" id="batch-student-upload" multiple accept=".jpg,.jpeg,.png,.pdf,.txt,.doc,.docx" hidden>
+                                <label for="batch-student-upload" class="upload-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span>Click to upload student files or drag and drop</span>
+                                    <small>Supports: Images, PDF, TXT, DOC, DOCX</small>
+                                </label>
+                            </div>
+                            <div id="student-file-assignments" class="student-file-assignments">
+                                <!-- Student file mappings will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="hideBatchAssignmentModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" onclick="handleBatchAssignment(event)">Grade All Submissions</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Batch Results Modal -->
+    <div id="batch-results-modal" class="modal" style="display: none;">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>Batch Grading Results</h3>
+                <button class="close-btn" onclick="hideBatchResultsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="batch-results-summary" id="batch-results-summary">
+                    <!-- Summary stats will be loaded here -->
+                </div>
+                <div class="batch-results-filter">
+                    <select id="batch-student-filter" onchange="filterBatchResults()">
+                        <option value="">All Students</option>
+                    </select>
+                    <select id="batch-score-filter" onchange="filterBatchResults()">
+                        <option value="">All Scores</option>
+                        <option value="90-100">90-100%</option>
+                        <option value="80-89">80-89%</option>
+                        <option value="70-79">70-79%</option>
+                        <option value="60-69">60-69%</option>
+                        <option value="0-59">Below 60%</option>
+                    </select>
+                    <input type="text" id="batch-search-filter" placeholder="Search feedback..." onkeyup="filterBatchResults()">
+                </div>
+                <div id="batch-results-list" class="results-list">
+                    <!-- Results will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="exportBatchResults()">Export Results</button>
+                <button type="button" class="btn btn-primary" onclick="hideBatchResultsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Class Grades Modal -->
+    <div id="class-grades-modal" class="modal" style="display: none;">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>Class Grades</h3>
+                <button class="close-btn" onclick="hideClassGradesModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="grades-filter">
+                    <select id="student-filter" onchange="filterGrades()">
+                        <option value="">All Students</option>
+                    </select>
+                    <select id="assignment-filter" onchange="filterGrades()">
+                        <option value="">All Assignments</option>
+                    </select>
+                    <select id="grade-score-filter" onchange="filterGrades()">
+                        <option value="">All Scores</option>
+                        <option value="90-100">90-100%</option>
+                        <option value="80-89">80-89%</option>
+                        <option value="70-79">70-79%</option>
+                        <option value="60-69">60-69%</option>
+                        <option value="0-59">Below 60%</option>
+                    </select>
+                    <input type="text" id="grade-search-filter" placeholder="Search feedback..." onkeyup="filterGrades()">
+                </div>
+                <div id="class-grades-list" class="grades-list">
+                    <!-- Grades will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-primary" onclick="hideClassGradesModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Detail Modal -->
+    <div id="student-detail-modal" class="modal" style="display: none;">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3 id="student-detail-title">Student Details</h3>
+                <button class="close-btn" onclick="hideStudentDetailModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="student-info">
+                    <div id="student-basic-info"></div>
+                </div>
+                <div class="student-assignments">
+                    <h4>Assignments & Grades</h4>
+                    <div id="student-assignments-list" class="assignments-list">
+                        <!-- Student assignments will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-primary" onclick="hideStudentDetailModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assignment Detail Modal -->
+    <div id="assignment-detail-modal" class="modal" style="display: none;">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3 id="assignment-detail-title">Assignment Details</h3>
+                <button class="close-btn" onclick="hideAssignmentDetailModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="assignment-info">
+                    <div id="assignment-basic-info"></div>
+                </div>
+                <div class="assignment-submissions">
+                    <h4>Student Submissions & Grades</h4>
+                    <div id="assignment-submissions-list" class="submissions-list">
+                        <!-- Assignment submissions will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-primary" onclick="hideAssignmentDetailModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Grades Modal -->
+    <div id="student-grades-modal" class="modal" style="display: none;">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>Student Grades</h3>
+                <button class="close-btn" onclick="hideStudentGradesModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="student-grades-list" class="grades-list">
+                    <!-- Student grades will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-primary" onclick="hideStudentGradesModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+<script>
+// Load current teacher info when page loads
+window.addEventListener('DOMContentLoaded', function() {
+    loadCurrentTeacher();
+});
+
+function loadCurrentTeacher() {
+    fetch('/current-teacher')
+        .then(response => response.json())
+        .then(data => {
+            if (data.teacher_id && data.teacher_name) {
+                // Update teacher name in top bar
+                const teacherNameElement = document.getElementById('teacherNameTop');
+                if (teacherNameElement) {
+                    teacherNameElement.textContent = data.teacher_name;
+                }
+                
+                // Update teacher name in sidebar if it exists
+                const teacherNameSidebar = document.getElementById('teacherName');
+                if (teacherNameSidebar) {
+                    teacherNameSidebar.textContent = data.teacher_name;
+                }
+            } else {
+                // If not authenticated, redirect to login
+                window.location.href = '/';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading teacher info:', error);
+            // Redirect to login on error
+            window.location.href = '/';
+        });
+}
+
+function handleLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+        fetch('/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Clear any stored data
+                if (typeof(Storage) !== "undefined") {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                }
+                // Redirect to login
+                window.location.href = '/';
+            } else {
+                alert('Logout failed. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Logout error:', error);
+            alert('Logout failed. Please try again.');
+        });
+    }
+}
+</script>

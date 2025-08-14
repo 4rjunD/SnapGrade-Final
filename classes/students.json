@@ -1,0 +1,18 @@
+[
+  {
+    "id": "d69f3521-2f95-4279-bd06-2284b0323862",
+    "class_id": "5f8d1198-5d85-4047-a1f3-5760910bbef9",
+    "name": "Arjun Dixit",
+    "email": "arjundixit3508@gmail.com",
+    "student_id": "",
+    "created_at": "2025-07-24T22:20:41.587010"
+  },
+  {
+    "id": "41c7e525-4aec-4f25-8435-54b30a9b4324",
+    "class_id": "5f8d1198-5d85-4047-a1f3-5760910bbef9",
+    "name": "Rishi Yedavalli",
+    "email": "yedavallirishi@gmail.com",
+    "student_id": "",
+    "created_at": "2025-07-24T22:20:54.046752"
+  }
+]
