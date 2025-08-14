@@ -109,3 +109,4 @@ exports/*
 
 # Ignore rubrics if sensitive
 # rubrics/rubrics.json
+.env
