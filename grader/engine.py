@@ -1,4 +1,5 @@
 import json
+import base64
 from openai import OpenAI
 from config import Config
 from grader.prompts import create_grading_prompt
@@ -117,7 +118,7 @@ Please respond in JSON format:
 
 def grade_assignment(assignment_type, submission, rubric, student_name=None, assignment_title=None):
     """
-    Grades an assignment using Google Gemini model based on the provided rubric.
+    Grades an assignment using Google Gemini model with OpenAI fallback.
     
     Args:
         assignment_type (str): The type of assignment
@@ -125,18 +126,33 @@ def grade_assignment(assignment_type, submission, rubric, student_name=None, ass
         rubric (str): The grading rubric
         student_name (str, optional): The name of the student
         assignment_title (str, optional): The title of the assignment
-    This function now routes to Gemini instead of GPT-4 for grading.
-    
-    Args:
-        assignment_type (str): The type of assignment (e.g., Essay, Multiple Choice, etc.)
-        submission (str): The student's submission to be graded
-        rubric (str): The grading rubric to be used for evaluation
         
     Returns:
         dict: A dictionary containing the score and feedback
     """
-    # Route to Gemini for grading with metadata
-    return grade_assignment_with_gemini(assignment_type, submission, rubric, student_name, assignment_title)
+    try:
+        # Try Gemini first
+        return grade_assignment_with_gemini(assignment_type, submission, rubric, student_name, assignment_title)
+    except Exception as e:
+        error_str = str(e)
+        if "quota" in error_str.lower() or "429" in error_str or "exceeded" in error_str.lower():
+            print(f"Gemini quota exceeded, falling back to OpenAI: {e}")
+            try:
+                result = grade_assignment_with_gpt4(assignment_type, submission, rubric)
+                result["grading_method"] = "OpenAI GPT-4 (Gemini quota exceeded)"
+                return result
+            except Exception as openai_error:
+                print(f"OpenAI fallback also failed: {openai_error}")
+                raise Exception(f"Both Gemini and OpenAI failed. Gemini: {e}, OpenAI: {openai_error}")
+        else:
+            print(f"Non-quota Gemini error, falling back to OpenAI: {e}")
+            try:
+                result = grade_assignment_with_gpt4(assignment_type, submission, rubric)
+                result["grading_method"] = "OpenAI GPT-4 (Gemini fallback)"
+                return result
+            except Exception as openai_error:
+                print(f"OpenAI fallback failed: {openai_error}")
+                raise Exception(f"Both Gemini and OpenAI failed. Gemini: {e}, OpenAI: {openai_error}")
 
 # Keep the original GPT-4 function for fallback if needed
 def grade_assignment_with_gpt4(assignment_type, submission, rubric):
